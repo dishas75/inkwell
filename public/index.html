@@ -4,193 +4,629 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Inkwell</title>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
   <link rel="icon" type="image/webp" href="faviicon.webp">
   <style>
-    *{margin:0;padding:0;box-sizing:border-box}
-    :root{
-      --ink-bg:#0a0a0f;--ink-surface:#12121a;--ink-card:#1a1a26;
-      --ink-border:#2a2a3d;--ink-accent:#7f77dd;--ink-accent2:#1d9e75;
-      --ink-text:#e8e8f0;--ink-muted:#888890;--ink-dim:#3a3a50;
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --paper: #f5f0e8;
+      --paper2: #ede8dc;
+      --ink: #1c1a15;
+      --ink-mid: #4a453a;
+      --ink-faint: #9a9080;
+      --ink-ghost: #cfc8b8;
+      --rule: #d8d0bc;
+      --red-ink: #8b2020;
+      --green-ink: #1a5c3a;
+      --accent: #3d3020;
+      --spine: #b8a882;
     }
-    body{background:var(--ink-bg);color:var(--ink-text);font-family:'Space Grotesk',sans-serif;padding:2rem 1.5rem;min-height:100vh}
-    .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:2.5rem;padding-bottom:1rem;border-bottom:1px solid var(--ink-border)}
-    .logo{font-family:'Space Mono',monospace;font-size:1.4rem;font-weight:700;letter-spacing:0.05em}
-    .logo span{color:var(--ink-accent)}
-    .status-dot{width:8px;height:8px;border-radius:50%;background:var(--ink-accent2);display:inline-block;margin-right:6px;animation:pulse 2s infinite}
-    @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
-    .status{font-size:12px;color:var(--ink-accent2);font-family:'Space Mono',monospace;display:flex;align-items:center}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem}
-    @media(max-width:700px){.grid{grid-template-columns:1fr}.insights-grid{grid-template-columns:1fr!important}}
-    .card{background:var(--ink-card);border:1px solid var(--ink-border);border-radius:12px;padding:1.5rem}
-    .card-label{font-size:11px;font-family:'Space Mono',monospace;color:var(--ink-muted);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:1rem;display:flex;align-items:center;gap:6px}
-    .card-label::before{content:'';width:16px;height:1px;background:var(--ink-accent);display:inline-block}
-    input,select,textarea{width:100%;background:var(--ink-surface);border:1px solid var(--ink-border);border-radius:8px;padding:0.6rem 0.75rem;color:var(--ink-text);font-family:'Space Grotesk',sans-serif;font-size:14px;outline:none;transition:border-color 0.2s;margin-bottom:0.75rem}
-    input:focus,select:focus,textarea:focus{border-color:var(--ink-accent)}
-    select option{background:var(--ink-surface)}
-    textarea{resize:vertical;min-height:70px}
-    .btn{width:100%;padding:0.7rem;border:1px solid var(--ink-accent);border-radius:8px;background:transparent;color:var(--ink-accent);font-family:'Space Mono',monospace;font-size:13px;cursor:pointer;letter-spacing:0.05em;transition:all 0.2s;margin-top:0.25rem}
-    .btn:hover{background:var(--ink-accent);color:#fff}
-    .insights-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem}
-    .insight-card{background:var(--ink-card);border:1px solid var(--ink-border);border-radius:10px;padding:1rem;text-align:center}
-    .insight-val{font-family:'Space Mono',monospace;font-size:1.6rem;font-weight:700;color:var(--ink-accent);margin-bottom:4px}
-    .insight-lbl{font-size:11px;color:var(--ink-muted);letter-spacing:0.08em;text-transform:uppercase}
-    .book-row{display:flex;justify-content:space-between;align-items:center;padding:0.75rem 0;border-bottom:1px solid var(--ink-dim)}
-    .book-row:last-child{border-bottom:none}
-    .book-title{font-size:14px;font-weight:500}
-    .book-meta{font-size:12px;color:var(--ink-muted);margin-top:2px}
-    .badge{font-size:10px;font-family:'Space Mono',monospace;padding:3px 8px;border-radius:4px;letter-spacing:0.05em}
-    .badge-reading{background:#1a2a1a;color:var(--ink-accent2);border:1px solid var(--ink-accent2)}
-    .badge-finished{background:#1e1a2e;color:var(--ink-accent);border:1px solid var(--ink-accent)}
-    .stars{color:var(--ink-accent);font-size:12px}
-    .empty{text-align:center;color:var(--ink-muted);font-size:13px;padding:2rem 0;font-family:'Space Mono',monospace}
-    .toast{position:fixed;bottom:2rem;right:2rem;background:var(--ink-accent2);color:#fff;padding:0.7rem 1.2rem;border-radius:8px;font-size:13px;font-family:'Space Mono',monospace;display:none;z-index:999}
-    .filter-row{display:flex;gap:0.5rem;margin-bottom:1rem}
-    .filter-row select{margin-bottom:0;flex:1}
+
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* top spine strip */
+    .spine {
+      height: 6px;
+      background: repeating-linear-gradient(90deg, var(--accent) 0px, var(--accent) 60px, var(--spine) 60px, var(--spine) 62px);
+    }
+
+    .page {
+      max-width: 1060px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4rem;
+    }
+
+    /* HEADER */
+    header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 3rem;
+      border-bottom: 1.5px solid var(--ink);
+      padding-bottom: 0.75rem;
+    }
+
+    .logo {
+      font-family: 'Lora', serif;
+      font-size: 2rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+    }
+
+    .logo em {
+      font-style: italic;
+      font-weight: 400;
+      color: var(--red-ink);
+    }
+
+    .status-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--green-ink);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      letter-spacing: 0.04em;
+    }
+
+    .status-pill::before {
+      content: '';
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green-ink);
+      animation: blink 3s ease-in-out infinite;
+    }
+
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    /* STATS ROW */
+    .stats {
+      display: flex;
+      gap: 0;
+      margin-bottom: 3rem;
+      border: 1.5px solid var(--ink);
+    }
+
+    .stat {
+      flex: 1;
+      padding: 1.25rem 1.5rem;
+      border-right: 1.5px solid var(--ink);
+    }
+
+    .stat:last-child { border-right: none; }
+
+    .stat-n {
+      font-family: 'Lora', serif;
+      font-size: 2.2rem;
+      font-weight: 600;
+      line-height: 1;
+      color: var(--ink);
+      margin-bottom: 0.3rem;
+    }
+
+    .stat-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--ink-faint);
+    }
+
+    /* MAIN LAYOUT */
+    .main {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    @media (max-width: 720px) {
+      .main { grid-template-columns: 1fr; gap: 2rem; }
+    }
+
+    /* FORM */
+    .form-section { min-width: 0;}
+
+    .section-heading {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--ink-faint);
+      margin-bottom: 1.25rem;
+    }
+
+    .notebook {
+      background: #faf7f1;
+      border-left: 4px solid var(--red-ink);
+      padding: 1.5rem 1.25rem;
+      border-top: 1px solid var(--rule);
+      border-right: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .field {
+      margin-bottom: 0.85rem;
+    }
+
+    .field label {
+      display: block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--ink-faint);
+      margin-bottom: 4px;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--rule);
+      padding: 0.4rem 0;
+      color: var(--ink);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.15s;
+      border-radius: 0;
+      appearance: none;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-bottom-color: var(--ink);
+    }
+
+    .field input::placeholder,
+    .field textarea::placeholder {
+      color: var(--ink-ghost);
+    }
+
+    .field textarea {
+      resize: none;
+      min-height: 60px;
+      line-height: 1.6;
+    }
+
+    .field select option { background: #faf7f1; }
+
+    .stars-input {
+      display: flex;
+      gap: 4px;
+      padding: 0.4rem 0;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .stars-input span {
+      font-size: 18px;
+      cursor: pointer;
+      color: var(--ink-ghost);
+      transition: color 0.1s;
+      user-select: none;
+    }
+
+    .stars-input span.lit { color: var(--red-ink); }
+
+    .btn-add {
+      margin-top: 1.25rem;
+      width: 100%;
+      background: var(--ink);
+      color: var(--paper);
+      border: none;
+      padding: 0.65rem 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .btn-add:hover { background: var(--red-ink); }
+
+    /* LOG */
+    .log-section { min-width: 0;}
+
+    .filter-bar {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-bar select {
+      background: transparent;
+      border: 1px solid var(--rule);
+      padding: 0.35rem 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--ink-mid);
+      cursor: pointer;
+      outline: none;
+      letter-spacing: 0.04em;
+      appearance: none;
+      border-radius: 0;
+    }
+
+    .filter-bar select:focus { border-color: var(--ink); }
+
+    /* BOOK ROWS */
+    .book-list { border-top: 1.5px solid var(--ink); }
+
+    .book-entry {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 1rem;
+      align-items: start;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .book-entry:last-child { border-bottom: 1.5px solid var(--ink); }
+
+    .book-title-text {
+      font-family: 'Lora', serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 3px;
+      text-decoration: underline;
+      text-decoration-color: var(--spine);
+      text-underline-offset: 3px;
+    }
+
+    .book-byline {
+      font-size: 12px;
+      color: var(--ink-faint);
+      margin-bottom: 4px;
+      font-style: italic;
+    }
+
+    .book-stars { font-size: 12px; color: var(--red-ink); }
+
+    .tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      padding: 2px 7px;
+      border: 1px solid;
+    }
+
+    .tag-reading { color: var(--green-ink); border-color: var(--green-ink); background: #f0f7f3; }
+    .tag-finished { color: var(--red-ink); border-color: var(--red-ink); background: #fdf3f3; }
+
+    .book-actions { display: flex; gap: 0.5rem; align-items: center; }
+
+    .btn-edit {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.05em;
+      padding: 2px 8px;
+      border: 1px solid var(--ink-ghost);
+      background: transparent;
+      color: var(--ink-faint);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-edit:hover { border-color: var(--ink); color: var(--ink); }
+
+    .edit-panel {
+      grid-column: 1 / -1;
+      display: none;
+      background: #faf7f1;
+      border-left: 3px solid var(--spine);
+      padding: 0.75rem 1rem;
+      margin-top: 0.5rem;
+    }
+
+    .edit-panel.open { display: block; }
+
+    .edit-row { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
+
+    .edit-panel select,
+    .edit-panel input {
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--rule);
+      padding: 0.3rem 0;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      color: var(--ink);
+      outline: none;
+      min-width: 80px;
+    }
+
+    .edit-panel select { min-width: 110px; appearance: none; }
+
+    .btn-save {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.05em;
+      padding: 3px 10px;
+      background: var(--ink);
+      color: var(--paper);
+      border: none;
+      cursor: pointer;
+    }
+
+    .empty-state {
+      padding: 3rem 0;
+      font-family: 'Lora', serif;
+      font-style: italic;
+      color: var(--ink-faint);
+      font-size: 14px;
+    }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: var(--ink);
+      color: var(--paper);
+      padding: 0.6rem 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      display: none;
+      z-index: 999;
+    }
+
+    /* FOOTER */
+    footer {
+      margin-top: 4rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--rule);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--ink-ghost);
+      letter-spacing: 0.08em;
+      text-align: right;
+    }
   </style>
 </head>
 <body>
-  <div class="header">
-    <div class="logo"><span></span> Inkwell</div>
-    <div class="status"><span class="status-dot"></span>api connected</div>
-  </div>
+  <div class="spine"></div>
+  <div class="page">
 
-  <div class="insights-grid">
-    <div class="insight-card"><div class="insight-val" id="i-total">-</div><div class="insight-lbl">total books</div></div>
-    <div class="insight-card"><div class="insight-val" id="i-rating">-</div><div class="insight-lbl">avg rating</div></div>
-    <div class="insight-card"><div class="insight-val" id="i-genre" style="font-size:1rem;padding-top:0.5rem">-</div><div class="insight-lbl">top genre</div></div>
-  </div>
+    <header>
+      <div class="logo">ink<em>well</em></div>
+      <div class="status-pill" id="status-label">connecting...</div>
+    </header>
 
-  <div class="grid">
-    <div class="card">
-      <div class="card-label">log a book</div>
-      <input id="title" placeholder="Title" />
-      <input id="author" placeholder="Author" />
-      <input id="genre" placeholder="Genre" />
-      <select id="status">
-        <option value="reading">Reading</option>
-        <option value="finished">Finished</option>
-      </select>
-      <input id="rating" type="number" placeholder="Rating (1–5)" min="1" max="5" />
-      <textarea id="review" placeholder="Review (optional)"></textarea>
-      <button class="btn" onclick="addBook()">+ add to log</button>
-    </div>
-    <div class="card">
-      <div class="card-label">filter log</div>
-      <div class="filter-row">
-        <select id="f-genre" onchange="loadBooks()">
-          <option value="">all genres</option>
-          <option>Fiction</option>
-          <option>Self Help</option>
-          <option>Fantasy</option>
-          <option>Biography</option>
-          <option>Science</option>
-          <option>History</option>
-        </select>
-        <select id="f-status" onchange="loadBooks()">
-          <option value="">all status</option>
-          <option value="reading">reading</option>
-          <option value="finished">finished</option>
-        </select>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-n" id="i-total">—</div>
+        <div class="stat-label">books logged</div>
       </div>
-      <div id="books"><div class="empty">loading books...</div></div>
+      <div class="stat">
+        <div class="stat-n" id="i-rating">—</div>
+        <div class="stat-label">avg rating</div>
+      </div>
+      <div class="stat">
+        <div class="stat-n" id="i-genre" style="font-size:1.4rem;padding-top:0.2rem">—</div>
+        <div class="stat-label">top genre</div>
+      </div>
     </div>
+
+    <div class="main">
+
+      <!-- FORM -->
+      <div class="form-section">
+        <div class="section-heading">log a book</div>
+        <div class="notebook">
+          <div class="field">
+            <label>Title</label>
+            <input id="title" placeholder="e.g. Siddhartha" autocomplete="off" />
+          </div>
+          <div class="field">
+            <label>Author</label>
+            <input id="author" placeholder="e.g. Hermann Hesse" autocomplete="off" />
+          </div>
+          <div class="field">
+            <label>Genre</label>
+            <input id="genre" placeholder="e.g. Fiction" autocomplete="off" />
+          </div>
+          <div class="field">
+            <label>Status</label>
+            <select id="status">
+              <option value="reading">reading</option>
+              <option value="finished">finished</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Rating</label>
+            <div class="stars-input" id="star-picker">
+              <span data-v="1">★</span>
+              <span data-v="2">★</span>
+              <span data-v="3">★</span>
+              <span data-v="4">★</span>
+              <span data-v="5">★</span>
+            </div>
+          </div>
+          <div class="field">
+            <label>Notes</label>
+            <textarea id="review" placeholder="thoughts, quotes, marginalia..."></textarea>
+          </div>
+          <button class="btn-add" onclick="addBook()">add to log →</button>
+        </div>
+      </div>
+
+      <!-- LOG -->
+      <div class="log-section">
+        <div class="section-heading">reading log</div>
+        <div class="filter-bar">
+          <select id="f-genre" onchange="loadBooks()">
+            <option value="">all genres</option>
+            <option>Fiction</option>
+            <option>Self Help</option>
+            <option>Fantasy</option>
+            <option>Biography</option>
+            <option>Science</option>
+            <option>History</option>
+          </select>
+          <select id="f-status" onchange="loadBooks()">
+            <option value="">all status</option>
+            <option value="reading">reading</option>
+            <option value="finished">finished</option>
+          </select>
+        </div>
+        <div class="book-list" id="books">
+          <div class="empty-state">loading your shelf...</div>
+        </div>
+      </div>
+
+    </div>
+
+    <footer>crafted by disha &nbsp;·&nbsp; opencode summer task</footer>
   </div>
 
   <div class="toast" id="toast"></div>
 
   <script>
     const API = "https://inkwell-6h32.onrender.com";
+    let chosenRating = 0;
 
-    function showToast(msg){
-      const t=document.getElementById('toast');
-      t.textContent=msg;t.style.display='block';
-      setTimeout(()=>t.style.display='none',2500);
+    // star picker
+    const picker = document.getElementById('star-picker');
+    picker.querySelectorAll('span').forEach(s => {
+      s.addEventListener('click', () => {
+        chosenRating = +s.dataset.v;
+        picker.querySelectorAll('span').forEach(x => {
+          x.classList.toggle('lit', +x.dataset.v <= chosenRating);
+        });
+      });
+    });
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.style.display = 'block';
+      setTimeout(() => t.style.display = 'none', 2500);
     }
 
-    function stars(n){return n?'★'.repeat(n)+'☆'.repeat(5-n):''}
+    function stars(n) {
+      if (!n) return '';
+      return '★'.repeat(n) + '☆'.repeat(5 - n);
+    }
 
-    async function addBook(){
-      const body={
-        title:document.getElementById('title').value,
-        author:document.getElementById('author').value,
-        genre:document.getElementById('genre').value,
-        status:document.getElementById('status').value,
-        rating:Number(document.getElementById('rating').value)||undefined,
-        review:document.getElementById('review').value
+    async function addBook() {
+      const body = {
+        title: document.getElementById('title').value.trim(),
+        author: document.getElementById('author').value.trim(),
+        genre: document.getElementById('genre').value.trim(),
+        status: document.getElementById('status').value,
+        rating: chosenRating || undefined,
+        review: document.getElementById('review').value
       };
-      if(!body.title||!body.author||!body.genre){showToast('fill in title, author & genre');return}
-      try{
-        const r=await fetch(`${API}/books`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-        const d=await r.json();
+      if (!body.title || !body.author || !body.genre) {
+        showToast('title, author & genre required');
+        return;
+      }
+      try {
+        const r = await fetch(`${API}/books`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        const d = await r.json();
         showToast(`logged: ${d.title}`);
-        ['title','author','genre','rating','review'].forEach(id=>document.getElementById(id).value='');
-        loadBooks();loadInsights();
-      }catch(e){showToast('error — is server running?')}
+        ['title', 'author', 'genre', 'review'].forEach(id => document.getElementById(id).value = '');
+        chosenRating = 0;
+        picker.querySelectorAll('span').forEach(x => x.classList.remove('lit'));
+        loadBooks(); loadInsights();
+      } catch (e) { showToast('error — is server running?'); }
     }
 
-    async function loadBooks(){
-      const genre=document.getElementById('f-genre').value;
-      const status=document.getElementById('f-status').value;
-      let url=`${API}/books?`;
-      if(genre)url+=`genre=${encodeURIComponent(genre)}&`;
-      if(status)url+=`status=${status}`;
-      try{
-        const r=await fetch(url);const books=await r.json();
-        const c=document.getElementById('books');
-        if(!books.length){c.innerHTML='<div class="empty">no books found</div>';return}
-        c.innerHTML=books.map(b=>`
-  <div class="book-row" id="row-${b._id}">
-    <div style="flex:1">
-      <div class="book-title">${b.title}</div>
-      <div class="book-meta">${b.author} · ${b.genre} <span class="stars">${stars(b.rating)}</span></div>
-      <div id="edit-${b._id}" style="display:none;margin-top:0.5rem;display:none">
-        <div style="display:flex;gap:0.5rem;margin-top:0.5rem">
-          <select id="s-${b._id}" style="margin-bottom:0;flex:1;padding:0.4rem;font-size:12px">
-            <option value="reading" ${b.status==='reading'?'selected':''}>reading</option>
-            <option value="finished" ${b.status==='finished'?'selected':''}>finished</option>
-          </select>
-          <input id="r-${b._id}" type="number" min="1" max="5" placeholder="rating" value="${b.rating||''}" style="margin-bottom:0;width:80px;padding:0.4rem;font-size:12px"/>
-          <button class="btn" style="width:auto;padding:0.4rem 0.8rem;font-size:11px" onclick="updateBook('${b._id}')">save</button>
-        </div>
-      </div>
-    </div>
-    <div style="display:flex;gap:0.5rem;align-items:center">
-      <span class="badge badge-${b.status}">${b.status}</span>
-      <button class="btn" style="width:auto;padding:3px 10px;font-size:10px" onclick="toggleEdit('${b._id}')">edit</button>
-    </div>
-  </div>`).join('');
-      }catch(e){document.getElementById('books').innerHTML='<div class="empty">could not reach api</div>'}
+    async function loadBooks() {
+      const genre = document.getElementById('f-genre').value;
+      const status = document.getElementById('f-status').value;
+      let url = `${API}/books?`;
+      if (genre) url += `genre=${encodeURIComponent(genre)}&`;
+      if (status) url += `status=${status}`;
+      try {
+        const r = await fetch(url);
+        const books = await r.json();
+        const c = document.getElementById('books');
+        if (!books.length) {
+          c.innerHTML = '<div class="empty-state">no books here yet.</div>';
+          return;
+        }
+        c.innerHTML = books.map(b => `
+          <div class="book-entry" id="row-${b._id}">
+            <div>
+              <div class="book-title-text">${b.title}</div>
+              <div class="book-byline">${b.author} · ${b.genre}</div>
+              ${b.rating ? `<div class="book-stars">${stars(b.rating)}</div>` : ''}
+            </div>
+            <div class="book-actions">
+              <span class="tag tag-${b.status}">${b.status}</span>
+              <button class="btn-edit" onclick="toggleEdit('${b._id}')">edit</button>
+            </div>
+            <div class="edit-panel" id="edit-${b._id}">
+              <div class="edit-row">
+                <select id="s-${b._id}">
+                  <option value="reading" ${b.status === 'reading' ? 'selected' : ''}>reading</option>
+                  <option value="finished" ${b.status === 'finished' ? 'selected' : ''}>finished</option>
+                </select>
+                <input id="r-${b._id}" type="number" min="1" max="5" placeholder="rating" value="${b.rating || ''}" style="width:70px"/>
+                <button class="btn-save" onclick="updateBook('${b._id}')">save</button>
+              </div>
+            </div>
+          </div>`).join('');
+      } catch (e) {
+        document.getElementById('books').innerHTML = '<div class="empty-state">could not reach api.</div>';
+      }
     }
 
-    async function loadInsights(){
-      try{
-        const r=await fetch(`${API}/insights`);const d=await r.json();
-        document.getElementById('i-total').textContent=d.totalBooks;
-        document.getElementById('i-rating').textContent=d.avgRating;
-        document.getElementById('i-genre').textContent=d.mostReadGenre;
-      }catch(e){}
+    async function loadInsights() {
+      try {
+        const r = await fetch(`${API}/insights`);
+        const d = await r.json();
+        document.getElementById('i-total').textContent = d.totalBooks;
+        document.getElementById('i-rating').textContent = d.avgRating;
+        document.getElementById('i-genre').textContent = d.mostReadGenre;
+        document.getElementById('status-label').textContent = 'api connected';
+      } catch (e) {
+        document.getElementById('status-label').textContent = 'api offline';
+        document.getElementById('status-label').style.color = '#8b2020';
+      }
+    }
+
+    function toggleEdit(id) {
+      const el = document.getElementById(`edit-${id}`);
+      el.classList.toggle('open');
+    }
+
+    async function updateBook(id) {
+      const status = document.getElementById(`s-${id}`).value;
+      const rating = Number(document.getElementById(`r-${id}`).value) || undefined;
+      try {
+        await fetch(`${API}/books/${id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status, rating })
+        });
+        showToast('updated');
+        loadBooks(); loadInsights();
+      } catch (e) { showToast('update failed'); }
     }
 
     loadBooks();
     loadInsights();
-    function toggleEdit(id){
-  const el=document.getElementById(`edit-${id}`);
-  el.style.display=el.style.display==='none'?'block':'none';
-}
-
-async function updateBook(id){
-  const status=document.getElementById(`s-${id}`).value;
-  const rating=Number(document.getElementById(`r-${id}`).value)||undefined;
-  try{
-    await fetch(`${API}/books/${id}`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status,rating})});
-    showToast('book updated!');
-    loadBooks();loadInsights();
-  }catch(e){showToast('update failed')}
-}
   </script>
-<footer style="text-align:center;padding:2rem 0 1rem;border-top:1px solid var(--ink-border);margin-top:2rem;font-family:'Space Mono',monospace;font-size:11px;color:var(--ink-muted);letter-spacing:0.08em;">
-  crafted by disha &nbsp;·&nbsp; opencode summer task
-</footer>
 </body>
 </html>
